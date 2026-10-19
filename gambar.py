@@ -159,6 +159,7 @@ class Pengambil:
         os.makedirs(folder, exist_ok=True)
         self.kunci = {}
         self.status = {}           # slug -> "proses" | "gagal"
+        self._url_cache = {}       # URL foto eksternal; tidak perlu menulis file pada serverless/Vercel
         self.gagal_sampai = {}     # slug -> waktu boleh dicoba lagi
         self.mendesak = ThreadPoolExecutor(max_workers=3, thread_name_prefix="gambar-mendesak")
         self.latar = ThreadPoolExecutor(max_workers=2, thread_name_prefix="gambar-latar")
@@ -208,6 +209,29 @@ class Pengambil:
         with open(j + ".tmp", "wb") as f: f.write(r.content)
         os.replace(j + ".tmp", j)
         return j
+
+    def url_langsung(self, slug):
+        """Cari URL foto eksternal tanpa mengunduh/menulis file; cocok untuk deployment serverless seperti Vercel."""
+        if self.jalur(slug):
+            return None
+        if slug in self._url_cache:
+            return self._url_cache[slug]
+        f = self.data.get(slug)
+        if not f or not self.web_aktif:
+            return None
+        url = self._manual().get(slug)
+        if url and url.startswith(("https://", "http://")):
+            self._url_cache[slug] = url
+            return url
+        for nama, fungsi in SUMBER:
+            try:
+                for kandidat, judul in fungsi(f["en"])[:4]:
+                    if kandidat.startswith(("https://", "http://")):
+                        self._url_cache[slug] = kandidat
+                        return kandidat
+            except Exception as e:
+                log.info("pencarian URL foto %s gagal dari %s: %s", slug, nama, str(e)[:100])
+        return None
 
     def ambil(self, slug):
         """Cari dan simpan foto satu makanan. Mengembalikan jalur berkas atau None."""
