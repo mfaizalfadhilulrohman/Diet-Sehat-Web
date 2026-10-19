@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="chat-page" aria-label="Pencarian menu dan informasi gizi">
-<div id="log" class="chat-log mb-3" aria-live="polite" aria-relevant="additions text">
-  <div class="bubble bot">Halo! Cari informasi kalori, gizi, manfaat, atau harga sebuah makanan. Jika belum ada di dataset, saya telusuri di web lalu saya simpan. Target energimu sekitar <b>{{ h.kal }} kkal/hari</b>{% if h.prot %} dan protein ± <b>{{ h.prot }} g</b>{% endif %}. Jadwal makan lengkap ada di halaman <a href="{{ url_for('jadwal') }}">Jadwal</a>.</div>
+<section class="chat-heading"><div class="chat-heading-icon" aria-hidden="true">✧</div><div><span class="eyebrow">ASISTEN MAKAN SEHAT</span><h1>Cari tahu tentang makanan</h1><p>Tanyakan kalori, kandungan gizi, manfaat, atau harga makanan.</p></div></section>
+<div class="chat-workspace">
+  <div id="log" class="chat-log">
+    <div class="bubble bot"><span class="bot-avatar" aria-hidden="true">🌿</span><div>Halo! Cari informasi kalori, gizi, manfaat, atau harga sebuah makanan. Jika belum ada di dataset, saya telusuri di web lalu saya simpan. Target energimu sekitar <b>{{ h.kal }} kkal/hari</b>{% if h.prot %} dan protein ± <b>{{ h.prot }} g</b>{% endif %}. Jadwal makan lengkap ada di halaman <a href="{{ url_for('jadwal') }}">Jadwal</a>.</div></div>
+  </div>
+  <div class="chat-composer">
+    <div class="quick-prompts"><button class="btn btn-outline-success btn-sm cepat">Kenapa target kalori saya segitu?</button><button class="btn btn-outline-success btn-sm cepat">Camilan sehat saat lapar</button><button class="btn btn-outline-success btn-sm cepat">Bagaimana cara tetap kenyang saat diet?</button></div>
+    <form id="f" class="input-group chat-input"><span class="chat-input-icon" aria-hidden="true">⌕</span><input id="i" class="form-control" placeholder="Tanyakan makanan, misalnya nasi goreng..." autocomplete="off" aria-label="Cari menu"><button class="btn btn-nutri"><span>Cari</span><span aria-hidden="true">↗</span></button></form>
+    <p class="chat-hint">Tekan Enter untuk mencari · Informasi gizi merupakan perkiraan</p>
+  </div>
 </div>
-<div class="mb-2 d-flex gap-2 flex-wrap">
-  <button class="btn btn-outline-success btn-sm cepat">Kenapa target kalori saya segitu?</button>
-  <button class="btn btn-outline-success btn-sm cepat">Camilan sehat saat lapar</button>
-  <button class="btn btn-outline-success btn-sm cepat">Bagaimana cara tetap kenyang saat diet?</button>
-</div>
-<form id="f" class="input-group">
-  <input id="i" class="form-control" placeholder="Cari makanan, misalnya nasi goreng" autocomplete="off">
-  <button class="btn btn-nutri">Cari</button>
-</form>
-</section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='chat.js') }}"></script>{% endblock %}

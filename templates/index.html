@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="hero mb-4">
-  <h1>Makan kenyang, tetap sehat.</h1>
-  <p class="mb-0">Isi berat badan sekarang, berat yang diinginkan, waktunya, menu yang kamu mau, dan biaya makan per hari. Diet Sehat menyusun jadwal makan yang aman, sesuai kantong, dan cocok untukmu.</p>
+<section class="hero hero-home mb-4">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="pulse-dot"></span> TEMAN MAKAN SEHATMU</span>
+    <h1>Makan kenyang,<br><span>tetap sehat.</span></h1>
+    <p class="mb-0">Rencana makan personal yang lebih bijak, sesuai kebutuhan tubuh dan anggaran harianmu.</p>
+    <div class="hero-points"><span>✦ Menu personal</span><span>✦ Sesuai anggaran</span><span>✦ Praktis setiap hari</span></div>
+  </div>
+  <div class="hero-art" aria-hidden="true"><div class="art-glow"></div><div class="food-bowl">🥗</div><span class="leaf-float leaf-a">🌿</span><span class="leaf-float leaf-b">🍃</span><span class="art-note">pilihan kecil,<br><b>hidup lebih baik</b></span></div>
 </section>
-<form method="post" class="card card-body shadow-sm border-0">
+<div class="form-intro"><span class="section-icon">✳</span><div><h2>Mulai dari profilmu</h2><p>Isi beberapa informasi agar jadwal yang dibuat lebih sesuai untukmu.</p></div></div>
+<form method="post" class="card card-body shadow-sm profile-form">
   {% include "_form.html" %}
-  <button class="btn btn-nutri btn-lg mt-4">Buat jadwal makanku</button>
+  <button class="btn btn-nutri btn-lg mt-4"><span aria-hidden="true">✦</span> Buat jadwal makanku <span aria-hidden="true">→</span></button>
+  <p class="form-safe">🔒 Data digunakan untuk menyusun rekomendasi di sesi ini.</p>
 </form>
 {% endblock %}

@@ -3,29 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#edf6ed">
-  <title>Diet Sehat — Rencana Makan Personal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="theme-color" content="#f3f8f1">
+  <title>Diet Sehat – Asisten Gizi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
-<body>
+<body class="page-{{ request.endpoint|default('home') }}">
+  <div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
   <nav class="navbar nav-nutri">
     <div class="container nav-inner">
-      <a class="navbar-brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">🌿</span><span><strong>Diet Sehat</strong><small>Hidup sehat, pilihan tepat</small></span></a>
+      <a class="navbar-brand" href="{{ url_for('index') }}" aria-label="Diet Sehat, beranda">
+        <span class="brand-mark" aria-hidden="true">🌿</span><span class="brand-copy"><strong>Diet Sehat</strong><small>Hidup sehat, pilihan tepat</small></span>
+      </a>
       {% if session.get('profil') %}
       <div class="btn-group nav-links" aria-label="Navigasi utama">
-        <a class="nav-link {{ 'active' if request.endpoint == 'jadwal' }}" href="{{ url_for('jadwal') }}"><span>▦</span> Jadwal</a>
-        <a class="nav-link {{ 'active' if request.endpoint == 'chat' }}" href="{{ url_for('chat') }}"><span>⌕</span> Cari Menu</a>
-        <a class="nav-link {{ 'active' if request.endpoint == 'profil' }}" href="{{ url_for('profil') }}"><span>♙</span> Profil</a>
+        <a class="btn nav-link {{ 'active' if request.endpoint == 'jadwal' }}" href="{{ url_for('jadwal') }}"><span aria-hidden="true">▦</span> Jadwal</a>
+        <a class="btn nav-link {{ 'active' if request.endpoint == 'chat' }}" href="{{ url_for('chat') }}"><span aria-hidden="true">⌕</span> Cari Menu</a>
+        <a class="btn nav-link {{ 'active' if request.endpoint == 'profil' }}" href="{{ url_for('profil') }}"><span aria-hidden="true">♙</span> Profil</a>
       </div>
       {% endif %}
     </div>
   </nav>
-  <main class="container page-shell">
+  <main class="container page-main">
     {% for kategori, pesan in get_flashed_messages(with_categories=true) %}<div class="alert alert-{{ kategori }}">{{ pesan }}</div>{% endfor %}
     {% block content %}{% endblock %}
-    <footer class="site-footer"><span>🌱</span> Diet Sehat <i>•</i> Rencana makan lebih bijak setiap hari <small>Edukasi, bukan pengganti dokter atau ahli gizi.</small></footer>
+    <p class="site-footer"><span>🌱</span> Diet Sehat <i>•</i> Edukasi, bukan pengganti dokter atau ahli gizi.</p>
   </main>
   {% block scripts %}{% endblock %}
 </body>
