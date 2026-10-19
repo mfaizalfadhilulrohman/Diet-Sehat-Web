@@ -607,8 +607,14 @@ def tambah_web(e):
         except (OSError, ValueError):
             data = []
         data.append({k: e.get(k) for k in ("nama", "kkal", "protein", "karbo", "lemak", "serat", "en", "sumber", "deskripsi")})
-        with open(BERKAS_WEB + ".tmp", "w", encoding="utf-8") as fh: json.dump(data, fh, ensure_ascii=False, indent=1)
-        os.replace(BERKAS_WEB + ".tmp", BERKAS_WEB)
+        # Penyimpanan permanen hanya tersedia pada sebagian hosting. Tetap masukkan
+        # hasil ke memori agar pencarian web tidak gagal di Vercel yang read-only.
+        try:
+            with open(BERKAS_WEB + ".tmp", "w", encoding="utf-8") as fh:
+                json.dump(data, fh, ensure_ascii=False, indent=1)
+            os.replace(BERKAS_WEB + ".tmp", BERKAS_WEB)
+        except OSError:
+            pass
         DATASET.append(f)
         BY_SLUG[slug(f["nama"])] = f
         return f

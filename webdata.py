@@ -17,6 +17,7 @@ UA = {"User-Agent": "DietSehat/2.0 (aplikasi belajar diet)"}
 BATAS = 8
 BERKAS_CATATAN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "catatan_web.json")
 _kunci = threading.Lock()
+_catatan_memori = {}  # cache proses: tetap berfungsi di platform dengan filesystem read-only
 
 STOP = set("""berapa kalori kalorinya kandungan gizi gizinya nutrisi manfaat manfaatnya khasiat khasiatnya apa apakah saja dalam di dari itu boleh
 sehat tidak ga gak nggak harga harganya kah ya dong tolong jelaskan jelasin tentang untuk diet satu 1 porsi per 100 gram g cara makan
@@ -121,17 +122,29 @@ def web_teks(term):
 
 
 def _catatan():
+    # File lokal dipakai saat tersedia; cache memori menjadi fallback untuk Vercel/serverless.
     try:
-        with open(BERKAS_CATATAN, encoding="utf-8") as fh: return json.load(fh)
+        with open(BERKAS_CATATAN, encoding="utf-8") as fh:
+            data = json.load(fh)
+            if isinstance(data, dict):
+                _catatan_memori.update(data)
     except (OSError, ValueError):
-        return {}
+        pass
+    return dict(_catatan_memori)
 
 
 def _simpan_catatan(term, teks):
     with _kunci:
-        d = _catatan()
-        d[term] = teks
-        with open(BERKAS_CATATAN, "w", encoding="utf-8") as fh: json.dump(d, fh, ensure_ascii=False, indent=1)
+        _catatan_memori[term] = teks
+        # Vercel dapat memakai filesystem read-only/ephemeral. Gagal menyimpan lokal
+        # tidak boleh menggagalkan hasil pencarian web untuk permintaan saat ini.
+        try:
+            d = _catatan()
+            d[term] = teks
+            with open(BERKAS_CATATAN, "w", encoding="utf-8") as fh:
+                json.dump(d, fh, ensure_ascii=False, indent=1)
+        except OSError:
+            pass
 
 
 def tanya_web(term):
