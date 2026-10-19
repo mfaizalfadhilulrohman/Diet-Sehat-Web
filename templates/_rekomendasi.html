@@ -1,0 +1,24 @@
+<div class="card rek border-0">
+  <div class="card-body">
+    <div class="text-success small fw-semibold">Menu untukmu{% if items|length > 1 %} · geser ke samping untuk melihat semua{% endif %}</div>
+    <div class="strip" tabindex="0" role="list" aria-label="Menu makanan, geser ke samping">
+      {% for f in items %}
+      <figure class="item" role="listitem">
+        {% if f.foto %}<img src="{{ f.foto }}" alt="{{ f.nama }}" loading="lazy">{% else %}<div class="noimg">🍽️</div>{% endif %}
+        <figcaption>
+          <b>{{ f.nama }}</b>
+          <small>{{ f.porsi }} · {{ f.kkal|round|int }} kilokalori</small>
+          {% for a in f.alasan %}<small>✓ {{ a }}</small>{% endfor %}
+        </figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+    <div class="nutrition-total my-3">
+      <div><strong>Kalori:</strong> {{ tot.kkal }} kilokalori (±{{ pct }}% target harian)</div>
+      <div><strong>Protein:</strong> {{ tot.protein }} gram</div>
+      <div><strong>Serat:</strong> {{ tot.serat }} gram</div>
+    </div>
+    {% for w in warn %}<div class="alert alert-warning py-2 small mb-2">{{ w }}</div>{% endfor %}
+    <small class="text-muted">Menu dipilih dari dataset makanan terkurasi oleh aturan sistem. Nilai gizi adalah perkiraan.</small>
+  </div>
+</div>

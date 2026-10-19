@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="log" class="chat-log mb-3">
+  <div class="bubble bot">Halo! Cari informasi kalori, gizi, manfaat, atau harga sebuah makanan. Jika belum ada di dataset, saya telusuri di web lalu saya simpan. Target energimu sekitar <b>{{ h.kal }} kkal/hari</b>{% if h.prot %} dan protein ± <b>{{ h.prot }} g</b>{% endif %}. Jadwal makan lengkap ada di halaman <a href="{{ url_for('jadwal') }}">Jadwal</a>.</div>
+</div>
+<div class="mb-2 d-flex gap-2 flex-wrap">
+  <button class="btn btn-outline-success btn-sm cepat">Kenapa target kalori saya segitu?</button>
+  <button class="btn btn-outline-success btn-sm cepat">Camilan sehat saat lapar</button>
+  <button class="btn btn-outline-success btn-sm cepat">Bagaimana cara tetap kenyang saat diet?</button>
+</div>
+<form id="f" class="input-group">
+  <input id="i" class="form-control" placeholder="Cari makanan, misalnya nasi goreng" autocomplete="off">
+  <button class="btn btn-nutri">Cari</button>
+</form>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='chat.js') }}"></script>{% endblock %}

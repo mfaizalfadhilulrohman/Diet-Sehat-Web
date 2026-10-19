@@ -1,0 +1,65 @@
+<div class="row g-3">
+  <div class="col-6"><label class="form-label">Usia (tahun)</label><input class="form-control" type="number" name="usia" min="10" max="100" value="{{ p.usia }}" required></div>
+  <div class="col-6"><label class="form-label">Jenis kelamin</label>
+    <select class="form-select" name="jk">{% for x in ['Perempuan', 'Laki-laki'] %}<option {{ 'selected' if x == p.jk }}>{{ x }}</option>{% endfor %}</select></div>
+  <div class="col-6"><label class="form-label">Tinggi (cm)</label><input class="form-control" type="number" name="tinggi" min="100" max="220" step="0.1" value="{{ p.tinggi }}" required></div>
+  <div class="col-6"><label class="form-label">Berat badan sekarang (kg)</label><input class="form-control" type="number" name="berat" min="25" max="250" step="0.1" value="{{ p.berat }}" required></div>
+  <div class="col-12">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" id="jaga" name="jaga" {{ 'checked' if p.jaga }}>
+      <label class="form-check-label" for="jaga">Saya hanya ingin menjaga berat badan</label>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6"><label class="form-label">Berat badan yang diinginkan (kg)</label><input class="form-control" type="number" id="target" name="target" min="25" max="250" step="0.1" value="{{ p.target if p.target is not none else '' }}" required></div>
+  <div class="col-7 col-sm-3"><label class="form-label">Dalam waktu</label><input class="form-control" type="number" id="waktu" name="waktu" min="1" max="104" step="1" value="{{ (p.waktu|round|int) if p.waktu else '' }}" required></div>
+  <div class="col-5 col-sm-3"><label class="form-label">Satuan</label>
+    <select class="form-select" id="satuan" name="satuan">{% for x in kb.SATUAN %}<option {{ 'selected' if x == p.satuan }}>{{ x }}</option>{% endfor %}</select></div>
+  <div class="col-12 form-text mt-0" id="bantu">Sistem menentukan sendiri apakah rencanamu perlu menurunkan, menaikkan, atau menjaga berat badan, dan menyesuaikannya bila tidak sehat.</div>
+  <div class="col-12"><label class="form-label">Aktivitas harian</label>
+    <select class="form-select" name="ak">{% for x in kb.AKTIVITAS %}<option {{ 'selected' if x == p.ak }}>{{ x }}</option>{% endfor %}</select></div>
+
+  <div class="col-12"><label class="form-label d-block fw-semibold">Menu makan yang ingin direkomendasikan</label>
+    <input type="checkbox" class="btn-check" id="s-semua" name="slot" value="semua" {{ 'checked' if p.slot|length == kb.SLOT_ID|length }}>
+    <label class="btn btn-outline-success btn-sm mb-1" for="s-semua">✔ Keseluruhan</label>
+    {% for sid, nama, waktu, bagi in kb.SLOT_MENU %}
+      <input type="checkbox" class="btn-check slot-satu" id="s-{{ sid }}" name="slot" value="{{ sid }}" {{ 'checked' if sid in p.slot }}>
+      <label class="btn btn-outline-success btn-sm mb-1" for="s-{{ sid }}">{{ nama }}</label>
+    {% endfor %}
+    <div class="form-text">Centang waktu makan yang ingin kamu dapat rekomendasinya. Minimal satu.</div></div>
+
+  <div class="col-12"><label class="form-label fw-semibold" for="biaya">Biaya makan yang diinginkan per hari (Rp)</label>
+    <div class="input-group"><span class="input-group-text">Rp</span>
+      <input class="form-control" type="text" inputmode="numeric" id="biaya" name="biaya" value="{{ '{:,}'.format(p.biaya|int).replace(',', '.') }}" required></div>
+    <div class="form-text">Untuk semua menu yang dicentang di atas. Jika biayanya kurang, sistem memberi tahu biaya minimum dan maksimumnya.</div></div>
+
+  <div class="col-12"><label class="form-label d-block fw-semibold">Alergi makanan (centang jika ada)</label>
+    {% for a in kb.ALERGI %}
+      <input type="checkbox" class="btn-check" id="al{{ loop.index }}" name="alergi" value="{{ a|lower }}" {{ 'checked' if a|lower in p.alergi }}>
+      <label class="btn btn-outline-danger btn-sm mb-1" for="al{{ loop.index }}">{{ a }}</label>
+    {% endfor %}</div>
+
+  <div class="col-12"><label class="form-label">Preferensi</label>
+    <select class="form-select" name="pref">{% for x in kb.PREFERENSI %}<option {{ 'selected' if x == p.pref }}>{{ x }}</option>{% endfor %}</select></div>
+
+  <div class="col-12"><label class="form-label d-block fw-semibold">Makanan yang tidak disukai (pilih yang populer)</label>
+    {% set tdk = p.tidak_suka.split(', ') if p.tidak_suka else [] %}
+    {% for a in kb.TIDAK_SUKA %}
+      <input type="checkbox" class="btn-check" id="ts{{ loop.index }}" name="tidak_suka" value="{{ a|lower }}" {{ 'checked' if a|lower in tdk }}>
+      <label class="btn btn-outline-secondary btn-sm mb-1" for="ts{{ loop.index }}">{{ a }}</label>
+    {% endfor %}</div>
+</div>
+<script>
+(function () {
+  const j = document.getElementById('jaga'), ids = ['target', 'waktu', 'satuan'].map(i => document.getElementById(i));
+  function atur() { ids.forEach(e => { e.disabled = j.checked; if (j.checked && e.type === 'number') e.removeAttribute('required'); else if (e.type === 'number') e.setAttribute('required', ''); }); document.getElementById('bantu').textContent = j.checked ? 'Berat badan yang diinginkan dan waktu tidak perlu diisi. Jika indeks massa tubuhmu menunjukkan obesitas atau terlalu kurus, sistem akan menyarankan tujuan yang lebih sehat.' : 'Sistem menentukan sendiri apakah rencanamu perlu menurunkan, menaikkan, atau menjaga berat badan, dan menyesuaikannya bila tidak sehat.'; }
+  j.addEventListener('change', atur); atur();
+
+  const semua = document.getElementById('s-semua'), satu = [...document.querySelectorAll('.slot-satu')];
+  semua.addEventListener('change', () => satu.forEach(c => c.checked = semua.checked));
+  satu.forEach(c => c.addEventListener('change', () => { semua.checked = satu.every(x => x.checked); }));
+
+  const b = document.getElementById('biaya');
+  b.addEventListener('input', () => { const d = b.value.replace(/\D/g, ''); b.value = d ? Number(d).toLocaleString('id-ID') : ''; });
+  b.form.addEventListener('submit', e => { if (!satu.some(c => c.checked)) { e.preventDefault(); alert('Pilih minimal satu waktu makan.'); } });
+})();
+</script>

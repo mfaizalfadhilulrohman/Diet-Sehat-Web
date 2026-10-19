@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-2 mb-3 text-center">
+  <div class="col-4"><div class="card card-body stat"><b>{{ h.bmi }}</b><small>BMI ({{ h.kat }})</small></div></div>
+  <div class="col-4"><div class="card card-body stat"><b>{{ h.kal }}</b><small>Target kkal/hari</small></div></div>
+  <div class="col-4"><div class="card card-body stat"><b>{{ h.prot or '–' }}</b><small>Protein (gram)</small></div></div>
+</div>
+
+<div class="card card-body border-0 shadow-sm mb-3">
+  <div class="small text-success fw-semibold">Rencana berat badanmu</div>
+  <div class="fs-5 fw-bold">{{ h.tujuan }}</div>
+  {% if h.arah %}
+  <div>{{ p.berat|round(1) }} kg → {{ h.target }} kg ({{ '%+.1f'|format(h.selisih) }} kg) dalam ± {{ h.minggu }} minggu · ± {{ h.laju }} kg/minggu</div>
+  <div class="small text-muted">Rentang berat badan sehat untuk tinggimu: {{ h.bb_sehat[0] }}–{{ h.bb_sehat[1] }} kg.</div>
+  {% else %}
+  <div>Pertahankan berat badan sekitar {{ p.berat|round(1) }} kg (rentang sehat {{ h.bb_sehat[0] }}–{{ h.bb_sehat[1] }} kg).</div>
+  {% endif %}
+</div>
+
+{% for g in h.ganti %}<div class="alert alert-warning small">⚠️ <b>Penyesuaian oleh sistem.</b> {{ g }}{% if h.arah and loop.last %} Jika ingin rencana lain, konsultasikan dengan dokter atau ahli gizi, lalu perbarui profil.{% endif %}</div>{% endfor %}
+{% for c in h.cat if c not in h.ganti %}<div class="alert alert-warning small">{{ c }}</div>{% endfor %}
+
+{% if not j.baris %}
+<div class="alert alert-warning">Belum ada menu yang cocok untuk pilihanmu. Kurangi alergi atau makanan tidak disukai di <a href="{{ url_for('profil') }}">profil</a>.</div>
+{% endif %}
+
+<div class="card card-body border-0 shadow-sm mb-3">
+  <div class="small text-success fw-semibold">Menu yang dipilih</div>
+  <div>{{ nama_slot|join(', ') }}</div>
+  <div class="small text-muted mt-1">Biaya yang kamu inginkan : {{ p.biaya|rp }} per hari</div>
+  <div class="small text-muted">Kisaran biaya menu yang dipilih : {{ lo|rp }} (minimum) sampai {{ hi|rp }} (maksimum) per hari</div>
+  {% if p.biaya > hi %}<div class="small text-muted">Biayamu di atas biaya maksimum, jadi menu tetap disusun dengan bahan terbaik yang ada.</div>{% endif %}
+</div>
+
+<h2 class="h5 mt-4 mb-3">Jadwal makan harian</h2>
+<div class="jadwal">
+{% for b in j.baris %}
+  <section class="slot" data-id="{{ b.id }}">
+    <div class="waktu">{{ b.waktu }}</div>
+    <div class="isi card border-0 shadow-sm">
+      <div class="card-body">
+        <h3 class="h6 fw-bold mb-1">{{ b.judul }}</h3>
+        <div class="small text-muted">Subtotal kalori : {{ b.kkal }} kkal</div>
+        <div class="small text-muted mb-2">Subtotal biaya : {{ b.harga|rp }}</div>
+        {% for i in b['items'] %}
+        <article class="menu">
+          <div class="foto" data-slug="{{ i.slug }}">{% if i.foto %}<img src="{{ url_for('gambar', nama=i.slug) }}" alt="{{ i.nama }}" loading="lazy">{% else %}<div class="noimg tunggu">🍽️</div>{% endif %}</div>
+          <div class="rinci">
+            <div class="fw-bold">{{ i.nama }}</div>
+            <div class="small text-muted">{{ i.porsi }}</div>
+            <div class="gizi small">
+              <div>Kalori : {{ i.kkal|round|int }} kkal</div>
+              <div>Protein : {{ i.protein }} g</div>
+              <div>Karbohidrat : {{ i.karbo }} g</div>
+              <div>Lemak : {{ i.lemak }} g</div>
+              <div>Serat : {{ i.serat }} g</div>
+              <div class="fw-semibold">Harga : {{ i.harga|rp }}</div>
+            </div>
+            <div class="small mt-2"><b>Alasan dipilih :</b> {{ i.alasan }}</div>
+            <div class="small"><b>Saran memakannya :</b> {{ i.saran }}</div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endfor %}
+</div>
+
+<div class="card card-body border-0 shadow-sm my-3 total">
+  <div class="fw-bold mb-1">Total hari ini</div>
+  <div>Kalori : {{ j.total.kkal }} kkal (±{{ j.persen }}% dari target harian {{ h.kal }} kkal)</div>
+  <div>Protein : {{ j.total.protein }} g</div>
+  <div>Karbohidrat : {{ j.total.karbo }} g</div>
+  <div>Lemak : {{ j.total.lemak }} g</div>
+  <div>Serat : {{ j.total.serat }} g</div>
+  <div class="fw-semibold">Biaya : {{ j.total.harga|rp }} dari {{ p.biaya|rp }}</div>
+  {% if j.persen < 90 %}<div class="small text-muted mt-1">Kamu hanya memilih sebagian waktu makan, jadi total kalori di bawah target harian.</div>{% endif %}
+</div>
+
+<div class="d-flex flex-wrap gap-2">
+  <a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}">Menu lain</a>
+  <a class="btn btn-outline-success" href="{{ url_for('profil') }}">Ubah profil</a>
+  <a class="btn btn-outline-success" href="{{ url_for('chat') }}">Cari menu</a>
+</div>
+<small class="text-muted d-block mt-3">Menu dipilih oleh aturan sistem dari dataset makanan terkurasi; nilai gizi adalah perkiraan. Harga acuan penelusuran web Oktober 2026 dan dapat berbeda di tiap kota.</small>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='jadwal.js') }}"></script>{% endblock %}

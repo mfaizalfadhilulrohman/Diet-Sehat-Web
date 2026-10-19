@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero mb-4">
+  <h1>Makan kenyang, tetap sehat.</h1>
+  <p class="mb-0">Isi berat badan sekarang, berat yang diinginkan, waktunya, menu yang kamu mau, dan biaya makan per hari. Diet Sehat menyusun jadwal makan yang aman, sesuai kantong, dan cocok untukmu.</p>
+</section>
+<form method="post" class="card card-body shadow-sm border-0">
+  {% include "_form.html" %}
+  <button class="btn btn-nutri btn-lg mt-4">Buat jadwal makanku</button>
+</form>
+{% endblock %}
