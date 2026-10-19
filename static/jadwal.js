@@ -12,7 +12,7 @@
       const d = await r.json();
       for (const s of slugs) {
         if (d[s] === 'ok') {
-          pending[s].forEach(el => { const im = new Image(); const nm = el.parentElement.querySelector('.fw-bold'); im.alt = nm ? nm.textContent : ''; im.src = '/gambar/' + s; el.replaceChildren(im); });
+          pending[s].forEach(el => { const im = new Image(); const nm = el.parentElement.querySelector('.fw-bold'); im.alt = nm ? nm.textContent : ''; im.src = '/gambar/' + s; im.onerror = () => { el.innerHTML = '<div class="noimg">🍽️</div>'; }; el.replaceChildren(im); });
           delete pending[s];
         } else if (d[s] === 'gagal') {
           pending[s].forEach(el => el.querySelector('.noimg').classList.remove('tunggu'));
