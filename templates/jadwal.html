@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row g-2 mb-3 text-center">
+<section class="dashboard-hero">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> RENCANA HARIANMU</span>
+    <h1>Makan sehat,<br><em>hidup lebih baik.</em></h1>
+    <p>Langkah kecil hari ini untuk tubuh yang lebih bugar. Pilihan menu disesuaikan dengan kebutuhan dan anggaranmu.</p>
+    <div class="hero-pills"><span>✦ Personal</span><span>♡ Seimbang</span><span>↗ Hemat</span></div>
+  </div>
+  <div class="hero-art" role="img" aria-label="Ilustrasi makanan sehat"><img src="{{ url_for('static', filename='gambar/poke_bowl_salmon.jpg') }}" alt="Mangkuk makanan sehat" onerror="this.style.display='none'"><span class="leaf leaf-one">✦</span><span class="leaf leaf-two">❋</span><div class="art-caption">Nutrisi baik,<br><b>mood lebih baik.</b></div></div>
+</section>
+<div class="section-heading"><div><span class="eyebrow">RINGKASAN</span><h2>Hari ini, lebih terarah</h2></div><span class="date-chip">◷ Jadwal personal</span></div>
+<div class="row g-2 mb-3 text-center summary-stats">
   <div class="col-4"><div class="card card-body stat"><b>{{ h.bmi }}</b><small>BMI ({{ h.kat }})</small></div></div>
   <div class="col-4"><div class="card card-body stat"><b>{{ h.kal }}</b><small>Target kkal/hari</small></div></div>
   <div class="col-4"><div class="card card-body stat"><b>{{ h.prot or '–' }}</b><small>Protein (gram)</small></div></div>
@@ -32,10 +42,20 @@
   {% if p.biaya > hi %}<div class="small text-muted">Biayamu di atas biaya maksimum, jadi menu tetap disusun dengan bahan terbaik yang ada.</div>{% endif %}
 </div>
 
-<h2 class="h5 mt-4 mb-3">Jadwal makan harian</h2>
+<section class="export-panel no-print" aria-labelledby="export-title">
+  <div class="export-copy"><span class="export-icon">⇩</span><div><h2 id="export-title">Simpan jadwalmu</h2><p>Unduh atau cetak rencana makan untuk digunakan kapan saja.</p></div></div>
+  <div class="export-actions">
+    <button type="button" class="export-btn" data-export="pdf"><span>▤</span> PDF / Cetak</button>
+    <button type="button" class="export-btn" data-export="xlsx"><span>▦</span> Excel (.xlsx)</button>
+    <button type="button" class="export-btn" data-export="csv"><span>⇩</span> CSV</button>
+    <button type="button" class="export-btn" data-export="json"><span>{ }</span> JSON</button>
+  </div>
+  <p class="export-status" aria-live="polite" id="export-status">Excel membutuhkan koneksi internet untuk memuat pustaka ekspor; jika gagal, file CSV tetap tersedia.</p>
+</section>
+<h2 class="h5 schedule-title"><span class="schedule-symbol">☘</span> Jadwal makan harian</h2>
 <div class="jadwal">
 {% for b in j.baris %}
-  <section class="slot" data-id="{{ b.id }}">
+  <section class="slot" data-id="{{ b.id }}" data-waktu="{{ b.waktu }}" data-judul="{{ b.judul }}" data-kalori="{{ b.kkal }}" data-biaya="{{ b.harga }}">
     <div class="waktu">{{ b.waktu }}</div>
     <div class="isi card border-0 shadow-sm">
       <div class="card-body">
@@ -78,11 +98,7 @@
   {% if j.persen < 90 %}<div class="small text-muted mt-1">Kamu hanya memilih sebagian waktu makan, jadi total kalori di bawah target harian.</div>{% endif %}
 </div>
 
-<div class="d-flex flex-wrap gap-2">
-  <a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}">Menu lain</a>
-  <a class="btn btn-outline-success" href="{{ url_for('profil') }}">Ubah profil</a>
-  <a class="btn btn-outline-success" href="{{ url_for('chat') }}">Cari menu</a>
-</div>
+<div class="schedule-bottom no-print"><a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}">⟳ Buat variasi menu</a><span>Menu baru akan tetap mengikuti profil dan anggaranmu.</span></div>
 <small class="text-muted d-block mt-3">Menu dipilih oleh aturan sistem dari dataset makanan terkurasi; nilai gizi adalah perkiraan. Harga acuan penelusuran web Oktober 2026 dan dapat berbeda di tiap kota.</small>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='jadwal.js') }}"></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='jadwal.js') }}"></script><script src="{{ url_for('static', filename='export-jadwal.js') }}"></script>{% endblock %}
