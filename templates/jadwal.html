@@ -101,12 +101,16 @@
   {% if j.persen < 90 %}<div class="small text-muted mt-1">Kamu hanya memilih sebagian waktu makan, jadi total kalori di bawah target harian.</div>{% endif %}
 </div>
 
-<section class="schedule-next-step">
-  <div class="next-step-copy"><span class="next-step-icon" aria-hidden="true">⟳</span><div><h3>Ingin pilihan yang berbeda?</h3><p>Variasi menu tetap mengikuti profil, kebutuhan gizi, dan anggaranmu.</p></div></div>
+<section class="schedule-next-step" aria-labelledby="next-step-title">
+  <div class="next-step-copy">
+    <span class="next-step-icon" aria-hidden="true">⟳</span>
+    <div class="next-step-text">
+      <h3 id="next-step-title">Ingin pilihan yang berbeda?</h3>
+      <p>Ganti variasi hidangan tanpa mengubah profil, kebutuhan gizi, atau anggaran yang sudah kamu tentukan.</p>
+    </div>
+  </div>
   <div class="schedule-actions">
-    <a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}">⟳ Buat variasi menu</a>
-    <a class="btn btn-outline-success" href="{{ url_for('profil') }}">Ubah profil</a>
-    <a class="btn btn-outline-success" href="{{ url_for('chat') }}">Cari menu</a>
+    <a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}"><span aria-hidden="true">⟳</span> Buat variasi menu</a>
   </div>
 </section>
 <small class="text-muted d-block mt-3 schedule-disclaimer">Menu dipilih oleh aturan sistem dari dataset makanan terkurasi; nilai gizi adalah perkiraan. Harga acuan penelusuran web Oktober 2026 dan dapat berbeda di tiap kota.</small>
