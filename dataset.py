@@ -556,18 +556,43 @@ def masalah_biaya(p, h):
 
 
 def susun_jadwal_biaya(p, h, seed):
-    """Jadwal acak (sesuai seed) yang total biayanya tidak melebihi biaya pengguna. Jika acak tidak ketemu, pakai susunan termurah."""
+    """Pilih jadwal dengan total harga tertinggi yang masih <= anggaran.
+
+    Saat pengguna menekan "Menu lain", seed berubah sehingga kumpulan kandidat
+    juga berubah. Dari kandidat yang lolos batas biaya, jadwal termahal dipilih
+    terlebih dahulu; jika beberapa jadwal memiliki harga sama, seed membantu
+    menghasilkan variasi menu. Semua kandidat tetap melewati filter profil,
+    alergi, preferensi, dan waktu makan di susun_jadwal().
+    """
     biaya = p.get("biaya") or 10 ** 9
-    for i in range(30):
-        j = susun_jadwal(p, h, seed + i * 7919)
-        if j["total"]["harga"] <= biaya: return j
-    for i in range(40):  # biaya ketat: pilih yang murah, tetapi tetap bervariasi mengikuti seed agar "Menu lain" berganti menu
-        j = susun_jadwal(p, h, seed + i * 104729, "murah")
-        if j["total"]["harga"] <= biaya: return j
-    for s in _SEED_BIAYA:  # pengaman: susunan termurah yang diketahui (selalu <= biaya minimum yang dilaporkan rentang_biaya)
-        j = susun_jadwal(p, h, s, "murah")
-        if j["total"]["harga"] <= biaya: return j
-    return susun_jadwal(p, h, 1, "murah")
+    kandidat = []
+
+    # Campurkan susunan biasa dan susunan yang secara khusus memprioritaskan
+    # bahan lebih mahal, agar tidak berhenti pada jadwal acak pertama yang murah.
+    for i in range(100):
+        kandidat.append(susun_jadwal(p, h, seed + i * 7919))
+    for i in range(80):
+        kandidat.append(susun_jadwal(p, h, seed + i * 104729, "mahal"))
+
+    sesuai_anggaran = [j for j in kandidat if j["total"]["harga"] <= biaya]
+    if sesuai_anggaran:
+        # Harga tertinggi dahulu. Urutan item menu tidak diubah, hanya jadwal
+        # yang paling mendekati anggaran yang dipilih.
+        harga_tertinggi = max(j["total"]["harga"] for j in sesuai_anggaran)
+        teratas = [j for j in sesuai_anggaran if j["total"]["harga"] == harga_tertinggi]
+        return teratas[seed % len(teratas)]
+
+    # Pengaman jika anggaran sangat ketat: cari jadwal termurah yang masih muat.
+    murah = []
+    for i in range(80):
+        murah.append(susun_jadwal(p, h, seed + i * 15485863, "murah"))
+    sesuai_anggaran = [j for j in murah if j["total"]["harga"] <= biaya]
+    if sesuai_anggaran:
+        return max(sesuai_anggaran, key=lambda j: j["total"]["harga"])
+
+    # Jika tidak ada jadwal yang memenuhi batas biaya, kembalikan yang termurah
+    # agar pemeriksaan biaya di halaman tetap dapat memberi penjelasan yang tepat.
+    return min(murah, key=lambda j: j["total"]["harga"])
 
 
 # ---------------------------------------------------------------- makanan tambahan dari web
@@ -607,14 +632,8 @@ def tambah_web(e):
         except (OSError, ValueError):
             data = []
         data.append({k: e.get(k) for k in ("nama", "kkal", "protein", "karbo", "lemak", "serat", "en", "sumber", "deskripsi")})
-        # Penyimpanan permanen hanya tersedia pada sebagian hosting. Tetap masukkan
-        # hasil ke memori agar pencarian web tidak gagal di Vercel yang read-only.
-        try:
-            with open(BERKAS_WEB + ".tmp", "w", encoding="utf-8") as fh:
-                json.dump(data, fh, ensure_ascii=False, indent=1)
-            os.replace(BERKAS_WEB + ".tmp", BERKAS_WEB)
-        except OSError:
-            pass
+        with open(BERKAS_WEB + ".tmp", "w", encoding="utf-8") as fh: json.dump(data, fh, ensure_ascii=False, indent=1)
+        os.replace(BERKAS_WEB + ".tmp", BERKAS_WEB)
         DATASET.append(f)
         BY_SLUG[slug(f["nama"])] = f
         return f
