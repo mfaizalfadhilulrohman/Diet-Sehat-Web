@@ -1,23 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="dashboard-hero">
-  <div class="hero-copy">
-    <span class="eyebrow"><span class="eyebrow-dot"></span> RENCANA HARIANMU</span>
-    <h1>Makan sehat,<br><em>hidup lebih baik.</em></h1>
-    <p>Langkah kecil hari ini untuk tubuh yang lebih bugar. Pilihan menu disesuaikan dengan kebutuhan dan anggaranmu.</p>
-    <div class="hero-pills"><span>✦ Personal</span><span>♡ Seimbang</span><span>↗ Hemat</span></div>
+<header class="schedule-hero mb-4">
+  <div class="schedule-hero-copy">
+    <span class="schedule-eyebrow"><span class="schedule-eyebrow-dot"></span> RENCANA HARIANMU</span>
+    <h1>Jadwal makan <em>yang lebih baik.</em></h1>
+    <p>Rencana makan harian yang disesuaikan dengan tujuan, kebutuhan gizi, dan anggaranmu.</p>
   </div>
-  <div class="hero-art" role="img" aria-label="Ilustrasi makanan sehat"><img src="{{ url_for('static', filename='gambar/poke_bowl_salmon.jpg') }}" alt="Mangkuk makanan sehat" onerror="this.style.display='none'"><span class="leaf leaf-one">✦</span><span class="leaf leaf-two">❋</span><div class="art-caption">Nutrisi baik,<br><b>mood lebih baik.</b></div></div>
-</section>
-<div class="section-heading"><div><span class="eyebrow">RINGKASAN</span><h2>Hari ini, lebih terarah</h2></div><span class="date-chip">◷ Jadwal personal</span></div>
-<div class="row g-2 mb-3 text-center summary-stats">
+  <div class="schedule-hero-art" aria-hidden="true"><span>🥗</span><i>✦</i><b>🌿</b></div>
+</header>
+
+<div class="row g-2 mb-3 text-center schedule-stats">
   <div class="col-4"><div class="card card-body stat"><b>{{ h.bmi }}</b><small>BMI ({{ h.kat }})</small></div></div>
   <div class="col-4"><div class="card card-body stat"><b>{{ h.kal }}</b><small>Target kkal/hari</small></div></div>
   <div class="col-4"><div class="card card-body stat"><b>{{ h.prot or '–' }}</b><small>Protein (gram)</small></div></div>
 </div>
 
-<div class="card card-body border-0 shadow-sm mb-3">
-  <div class="small text-success fw-semibold">Rencana berat badanmu</div>
+<div class="card card-body border-0 shadow-sm mb-3 goal-card">
+  <div class="small text-success fw-semibold section-kicker">TUJUANMU</div>
   <div class="fs-5 fw-bold">{{ h.tujuan }}</div>
   {% if h.arah %}
   <div>{{ p.berat|round(1) }} kg → {{ h.target }} kg ({{ '%+.1f'|format(h.selisih) }} kg) dalam ± {{ h.minggu }} minggu · ± {{ h.laju }} kg/minggu</div>
@@ -34,28 +33,32 @@
 <div class="alert alert-warning">Belum ada menu yang cocok untuk pilihanmu. Kurangi alergi atau makanan tidak disukai di <a href="{{ url_for('profil') }}">profil</a>.</div>
 {% endif %}
 
-<div class="card card-body border-0 shadow-sm mb-3">
-  <div class="small text-success fw-semibold">Menu yang dipilih</div>
+<div class="card card-body border-0 shadow-sm mb-3 budget-card">
+  <div class="small text-success fw-semibold section-kicker">ANGGARAN & PILIHAN MENU</div>
   <div>{{ nama_slot|join(', ') }}</div>
   <div class="small text-muted mt-1">Biaya yang kamu inginkan : {{ p.biaya|rp }} per hari</div>
   <div class="small text-muted">Kisaran biaya menu yang dipilih : {{ lo|rp }} (minimum) sampai {{ hi|rp }} (maksimum) per hari</div>
   {% if p.biaya > hi %}<div class="small text-muted">Biayamu di atas biaya maksimum, jadi menu tetap disusun dengan bahan terbaik yang ada.</div>{% endif %}
 </div>
 
-<section class="export-panel no-print" aria-labelledby="export-title">
-  <div class="export-copy"><span class="export-icon">⇩</span><div><h2 id="export-title">Simpan jadwalmu</h2><p>Unduh atau cetak rencana makan untuk digunakan kapan saja.</p></div></div>
-  <div class="export-actions">
-    <button type="button" class="export-btn" data-export="pdf"><span>▤</span> PDF / Cetak</button>
-    <button type="button" class="export-btn" data-export="xlsx"><span>▦</span> Excel (.xlsx)</button>
-    <button type="button" class="export-btn" data-export="csv"><span>⇩</span> CSV</button>
-    <button type="button" class="export-btn" data-export="json"><span>{ }</span> JSON</button>
+<section class="export-panel mb-4" aria-labelledby="export-title">
+  <div class="export-panel-copy">
+    <span class="export-icon" aria-hidden="true">↗</span>
+    <div><h2 id="export-title">Simpan jadwalmu</h2><p>Unduh atau cetak rencana makan ini agar mudah digunakan kapan saja.</p></div>
   </div>
-  <p class="export-status" aria-live="polite" id="export-status">Excel membutuhkan koneksi internet untuk memuat pustaka ekspor; jika gagal, file CSV tetap tersedia.</p>
+  <div class="export-actions" aria-label="Pilihan ekspor">
+    <button type="button" class="export-btn" onclick="window.print()"><span aria-hidden="true">▤</span> PDF / Cetak</button>
+    <button type="button" class="export-btn" data-export="xlsx"><span aria-hidden="true">▦</span> Excel (.xlsx)</button>
+    <button type="button" class="export-btn" data-export="csv"><span aria-hidden="true">↓</span> CSV</button>
+    <button type="button" class="export-btn" data-export="json"><span aria-hidden="true">{ }</span> JSON</button>
+  </div>
+  <p class="export-note">Untuk Excel, pastikan koneksi internet tersedia. Jika ekspor Excel tidak berhasil, kamu tetap bisa menyimpan data dalam format CSV.</p>
 </section>
-<h2 class="h5 schedule-title"><span class="schedule-symbol">☘</span> Jadwal makan harian</h2>
-<div class="jadwal">
+
+<h2 class="h5 mt-4 mb-3 schedule-section-title"><span>✳</span> Jadwal makan harian</h2>
+<div class="jadwal schedule-timeline">
 {% for b in j.baris %}
-  <section class="slot" data-id="{{ b.id }}" data-waktu="{{ b.waktu }}" data-judul="{{ b.judul }}" data-kalori="{{ b.kkal }}" data-biaya="{{ b.harga }}">
+  <section class="slot schedule-slot" data-id="{{ b.id }}">
     <div class="waktu">{{ b.waktu }}</div>
     <div class="isi card border-0 shadow-sm">
       <div class="card-body">
@@ -87,7 +90,7 @@
 {% endfor %}
 </div>
 
-<div class="card card-body border-0 shadow-sm my-3 total">
+<div class="card card-body border-0 shadow-sm my-3 total daily-total">
   <div class="fw-bold mb-1">Total hari ini</div>
   <div>Kalori : {{ j.total.kkal }} kkal (±{{ j.persen }}% dari target harian {{ h.kal }} kkal)</div>
   <div>Protein : {{ j.total.protein }} g</div>
@@ -98,7 +101,14 @@
   {% if j.persen < 90 %}<div class="small text-muted mt-1">Kamu hanya memilih sebagian waktu makan, jadi total kalori di bawah target harian.</div>{% endif %}
 </div>
 
-<div class="schedule-bottom no-print"><a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}">⟳ Buat variasi menu</a><span>Menu baru akan tetap mengikuti profil dan anggaranmu.</span></div>
-<small class="text-muted d-block mt-3">Menu dipilih oleh aturan sistem dari dataset makanan terkurasi; nilai gizi adalah perkiraan. Harga acuan penelusuran web Oktober 2026 dan dapat berbeda di tiap kota.</small>
+<section class="schedule-next-step">
+  <div class="next-step-copy"><span class="next-step-icon" aria-hidden="true">⟳</span><div><h3>Ingin pilihan yang berbeda?</h3><p>Variasi menu tetap mengikuti profil, kebutuhan gizi, dan anggaranmu.</p></div></div>
+  <div class="schedule-actions">
+    <a class="btn btn-nutri" href="{{ url_for('jadwal', s=baru) }}">⟳ Buat variasi menu</a>
+    <a class="btn btn-outline-success" href="{{ url_for('profil') }}">Ubah profil</a>
+    <a class="btn btn-outline-success" href="{{ url_for('chat') }}">Cari menu</a>
+  </div>
+</section>
+<small class="text-muted d-block mt-3 schedule-disclaimer">Menu dipilih oleh aturan sistem dari dataset makanan terkurasi; nilai gizi adalah perkiraan. Harga acuan penelusuran web Oktober 2026 dan dapat berbeda di tiap kota.</small>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='jadwal.js') }}"></script><script src="{{ url_for('static', filename='export-jadwal.js') }}"></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='jadwal.js') }}"></script>{% endblock %}
