@@ -1,6 +1,6 @@
 /* Diet Sehat — custom CSS tanpa framework */
 :root{--ink:#173c32;--leaf:#27845d;--leaf-dark:#1d6748;--mint:#eaf5ee;--paper:#f5f8f6;--line:#dce8e0;--muted:#65766d;--white:#fff;--radius:18px;--shadow:0 8px 28px rgba(23,60,50,.07)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:#20332b;font:16px/1.6 "Plus Jakarta Sans",Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 8% 5%,#c9ead8 0,transparent 34%),radial-gradient(ellipse at 95% 28%,#d7e9f7 0,transparent 30%),linear-gradient(145deg,#edf7ef 0%,#f2f4fb 48%,#e8f4ed 100%);background-attachment:fixed;color:#20332b;font:16px/1.6 "Plus Jakarta Sans",Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
 a{color:var(--leaf);text-decoration:none}a:hover{color:var(--leaf-dark)}img{max-width:100%}button,input,select,textarea{font:inherit}button,.btn{cursor:pointer}
 .container{width:min(100% - 32px,1100px);margin-inline:auto}.py-4{padding-block:28px}.mt-4{margin-top:1.5rem}.mt-3{margin-top:1rem}.mt-2{margin-top:.6rem}.mb-4{margin-bottom:1.5rem}.mb-3{margin-bottom:1rem}.mb-2{margin-bottom:.6rem}.mb-1{margin-bottom:.35rem}.my-3{margin-block:1rem}.my-2{margin-block:.6rem}.d-block{display:block}.d-flex{display:flex}.flex-wrap{flex-wrap:wrap}.gap-2{gap:.6rem}.text-center{text-align:center}.text-muted,.small.text-muted{color:var(--muted)}.small{font-size:.88rem}.fw-bold{font-weight:800}.fw-semibold{font-weight:700}.h5{font-size:1.2rem}.h6{font-size:1rem}.fs-5{font-size:1.2rem}.mb-0{margin-bottom:0}.mt-1{margin-top:.25rem}.border-0{border:0!important}.shadow-sm{box-shadow:var(--shadow)}.text-success{color:var(--leaf)}.text-white{color:white}.text-bg-success{background:var(--leaf);color:#fff}.text-bg-light{background:#eef4f0;color:#29463a}.py-2{padding-block:.6rem}.px-3{padding-inline:1rem}.w-100{width:100%}
 .navbar{background:var(--ink);color:#fff;box-shadow:0 3px 18px #102b221c}.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}.navbar-brand{font-size:1.2rem;letter-spacing:-.03em}.btn-group{display:flex;gap:7px;flex-wrap:wrap}.btn-group .btn{border-radius:999px}
@@ -13,3 +13,19 @@ a{color:var(--leaf);text-decoration:none}a:hover{color:var(--leaf-dark)}img{max-
 @media(min-width:576px){.col-sm-6{width:50%}.col-sm-3{width:25%}}
 @media(max-width:700px){.container{width:min(100% - 24px,1100px)}.nav-inner{align-items:flex-start;flex-direction:column;gap:10px}.btn-group{width:100%}.btn-group .btn{flex:1}.py-4{padding-block:18px}.hero{border-radius:18px}.slot{gap:8px}.slot .waktu{flex-basis:90px}.item{flex-basis:165px}}
 @media(max-width:480px){.col-6{width:50%}.col-4{width:33.3333%}.slot{flex-direction:column;gap:5px}.slot .waktu{padding-top:0;flex:auto}.menu{flex-direction:column}.menu .foto{width:100%;height:180px;flex-basis:auto}.chat-log{max-height:58vh}.btn-lg{width:100%}.stat{padding:12px 6px}.stat small{font-size:.75rem}.d-flex.flex-wrap .btn{flex:1 1 auto}.form-control,.form-select{font-size:16px}}
+
+/* Latar visual tambahan: hijau lembut dengan aksen biru, tetap nyaman dibaca */
+main.container{position:relative}
+main.container:before{content:"";position:fixed;z-index:-1;left:-110px;bottom:-130px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,#a7dfc0aa,transparent 70%);pointer-events:none}
+main.container:after{content:"";position:fixed;z-index:-1;right:-130px;top:120px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,#b9d5f0aa,transparent 70%);pointer-events:none}
+.card{box-shadow:0 10px 30px rgba(29,78,55,.055)}
+
+
+/* Cari Menu: area jawaban dapat digulir, kolom pencarian tetap di bagian bawah. */
+.chat-page{display:flex;flex-direction:column;min-height:calc(100dvh - 150px);height:calc(100dvh - 150px);gap:10px}
+.chat-page .chat-log{flex:1 1 auto;min-height:180px;max-height:none;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth}
+.chat-page #f{position:sticky;bottom:0;z-index:5;flex:0 0 auto;padding:10px;background:rgba(239,247,241,.97);border:1px solid var(--line);border-radius:15px;box-shadow:0 -5px 18px rgba(24,65,43,.08);backdrop-filter:blur(10px)}
+.chat-page #f .form-control{min-width:0}
+.chat-page #f button{flex:0 0 auto}
+@supports(height:100dvh){.chat-page{min-height:calc(100dvh - 150px);height:calc(100dvh - 150px)}}
+@media(max-width:600px){.chat-page{min-height:calc(100dvh - 125px);height:calc(100dvh - 125px)}.chat-page .chat-log{min-height:140px}.chat-page #f{padding:7px;bottom:0}}
