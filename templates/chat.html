@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<div id="log" class="chat-log mb-3">
+<section class="chat-page" aria-label="Pencarian menu dan informasi gizi">
+<div id="log" class="chat-log mb-3" aria-live="polite" aria-relevant="additions text">
   <div class="bubble bot">Halo! Cari informasi kalori, gizi, manfaat, atau harga sebuah makanan. Jika belum ada di dataset, saya telusuri di web lalu saya simpan. Target energimu sekitar <b>{{ h.kal }} kkal/hari</b>{% if h.prot %} dan protein ± <b>{{ h.prot }} g</b>{% endif %}. Jadwal makan lengkap ada di halaman <a href="{{ url_for('jadwal') }}">Jadwal</a>.</div>
 </div>
 <div class="mb-2 d-flex gap-2 flex-wrap">
@@ -12,5 +13,6 @@
   <input id="i" class="form-control" placeholder="Cari makanan, misalnya nasi goreng" autocomplete="off">
   <button class="btn btn-nutri">Cari</button>
 </form>
+</section>
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='chat.js') }}"></script>{% endblock %}
