@@ -134,3 +134,62 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 @media(hover:none){.nav-links .nav-link:hover{transform:none}.nav-links .nav-link:hover>span{transform:none}.nav-links .nav-link::before{display:none}}
 @media(max-width:390px){.nav-links .nav-link.active::after{left:25%;right:25%;bottom:2px}}
 @media(prefers-reduced-motion:reduce){.nav-links .nav-link,.nav-links .nav-link::before,.nav-links .nav-link>span,.brand-mark{transition:none!important;animation:none!important}.nav-links .nav-link:hover,.nav-links .nav-link:active{transform:none}}
+
+/* ── Mobile layout polish: spacing, readable content, no duplicate actions ── */
+.page-jadwal .page-main{width:min(100% - 32px,1100px);margin-inline:auto;}
+.page-jadwal .schedule-hero-copy,.page-jadwal .goal-card,.page-jadwal .budget-card,
+.page-jadwal .export-panel,.page-jadwal .schedule-slot .isi,.page-jadwal .daily-total,
+.page-jadwal .schedule-next-step{min-width:0;}
+.page-jadwal .schedule-slot .isi>.card-body{padding:clamp(18px,3vw,30px);}
+.page-jadwal .schedule-slot .rinci{min-width:0;overflow-wrap:anywhere;}
+.page-jadwal .schedule-slot .rinci .small,
+.page-jadwal .schedule-slot .rinci .fw-bold,
+.page-jadwal .schedule-disclaimer{overflow-wrap:anywhere;word-break:normal;}
+.page-jadwal .schedule-slot .menu{align-items:start;}
+.page-jadwal .schedule-slot .menu .foto{overflow:hidden;}
+.page-jadwal .schedule-slot .menu .foto img{display:block;width:100%;height:100%;object-fit:cover;}
+.page-jadwal .export-panel{overflow:hidden;}
+.page-jadwal .export-panel-copy>div{min-width:0;}
+.page-jadwal .export-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));}
+.page-jadwal .export-btn{min-width:0;white-space:normal;line-height:1.3;overflow-wrap:anywhere;}
+.page-jadwal .schedule-next-step{display:flex;flex-direction:column;align-items:stretch;gap:20px;padding:clamp(20px,4vw,30px);}
+.page-jadwal .next-step-copy{align-items:flex-start;gap:15px;}
+.page-jadwal .next-step-text{min-width:0;flex:1;}
+.page-jadwal .next-step-copy h3{line-height:1.35;overflow-wrap:anywhere;}
+.page-jadwal .next-step-copy p{max-width:58ch;line-height:1.7;overflow-wrap:anywhere;}
+.page-jadwal .schedule-actions{display:block;width:100%;}
+.page-jadwal .schedule-actions .btn{width:100%;min-height:52px;white-space:normal;line-height:1.35;}
+.page-jadwal .schedule-actions .btn-nutri{display:flex;align-items:center;justify-content:center;gap:9px;}
+.page-jadwal .schedule-actions .btn-nutri span{display:inline-block;transition:transform .35s ease;}
+.page-jadwal .schedule-actions .btn-nutri:hover span{transform:rotate(90deg);}
+.page-jadwal .daily-total>div{min-width:0;overflow-wrap:anywhere;}
+@media(max-width:760px){
+ .page-jadwal .page-main{width:calc(100% - 28px);}
+ .page-jadwal .schedule-next-step{gap:17px;}
+ .page-jadwal .export-actions{grid-template-columns:repeat(2,minmax(0,1fr));}
+ .page-jadwal .export-btn{width:100%;}
+}
+@media(max-width:520px){
+ .page-jadwal .page-main{width:calc(100% - 28px);padding-top:16px;}
+ .page-jadwal .schedule-hero{padding:23px 19px;}
+ .page-jadwal .schedule-slot .isi>.card-body{padding:17px;}
+ .page-jadwal .schedule-slot .menu{grid-template-columns:minmax(86px,30%) minmax(0,1fr);gap:13px;padding:17px 0;}
+ .page-jadwal .schedule-slot .menu .foto{width:100%;height:108px;}
+ .page-jadwal .schedule-slot .rinci .small{font-size:.83rem!important;line-height:1.7;}
+ .page-jadwal .schedule-slot .gizi{padding:12px;}
+ .page-jadwal .export-panel{padding:19px;}
+ .page-jadwal .export-actions{gap:9px;}
+ .page-jadwal .export-btn{min-height:48px;padding:11px 8px;font-size:.82rem;}
+ .page-jadwal .schedule-next-step{padding:20px;}
+ .page-jadwal .next-step-copy{gap:12px;}
+ .page-jadwal .next-step-icon{flex-basis:38px;width:38px;height:38px;}
+ .page-jadwal .schedule-actions .btn{min-height:50px;}
+ .page-jadwal .schedule-disclaimer{padding-inline:2px;line-height:1.75;}
+}
+@media(max-width:360px){
+ .page-jadwal .page-main{width:calc(100% - 22px);}
+ .page-jadwal .schedule-slot .menu{grid-template-columns:1fr;}
+ .page-jadwal .schedule-slot .menu .foto{height:170px;}
+ .page-jadwal .export-actions{grid-template-columns:1fr 1fr;}
+}
+@media(prefers-reduced-motion:reduce){.page-jadwal .schedule-actions .btn-nutri span{transition:none;}}
