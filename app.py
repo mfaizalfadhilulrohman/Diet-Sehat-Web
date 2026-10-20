@@ -28,11 +28,7 @@ def gambar(nama):
     if nama not in ds.BY_SLUG: abort(404)
     j = FOTO.jalur(nama)
     if not j:
-        # Di Vercel filesystem serverless tidak persisten. Arahkan browser ke gambar web,
-        # tanpa mencoba menyimpan file ke folder static/gambar.
-        url = FOTO.url_langsung(nama)
-        if url:
-            return redirect(url, code=302)
+        FOTO.minta(nama)
         r = app.response_class("", 404)
         r.headers["Cache-Control"] = "no-store"
         return r
@@ -45,15 +41,8 @@ def gambar(nama):
 def gambar_status():
     """Status foto untuk browser: {slug: ok|proses|gagal}. Dipakai jadwal.js agar foto muncul begitu siap."""
     slugs = [x for x in request.args.get("s", "").split(",") if x in ds.BY_SLUG][:40]
-    hasil = {}
-    for x in slugs:
-        if FOTO.jalur(x):
-            hasil[x] = "ok"
-        else:
-            # Biarkan browser meminta /gambar/<slug>; route tersebut akan mengarahkan
-            # langsung ke URL gambar web dan tidak membutuhkan file lokal.
-            hasil[x] = "ok" if FOTO.web_aktif else "gagal"
-    return jsonify(hasil)
+    for x in slugs: FOTO.minta(x)
+    return jsonify({x: FOTO.keadaan(x) for x in slugs})
 
 
 # ---------------------------------------------------------------- Profil
@@ -145,7 +134,7 @@ def jadwal():
     for b in j["baris"]:
         for i in b["items"]:
             i["foto"] = FOTO.jalur(i["slug"]) is not None
-            # Foto yang tidak tersedia lokal diambil langsung dari URL web melalui route /gambar/<slug>.
+            if not i["foto"]: FOTO.minta(i["slug"])  # hanya jika fotonya BELUM ada di static/gambar
     lo, hi = ds.rentang_biaya(p, h)
     return render_template("jadwal.html", h=h, j=j, p=p, kb=kb, seed=seed, baru=random.randint(1, 10 ** 6), lo=lo, hi=hi,
                            nama_slot=[kb.SLOT_NAMA[i] for i in ds.pilihan_slot(p)])
@@ -171,9 +160,11 @@ def profil():
     return render_template("profil.html", p=p, h=kb.hitung(p), kb=kb)
 
 
-@app.post("/reset")
+@app.route("/reset", methods=["GET", "POST"])
 def reset():
-    session.clear()
+    # GET hanya mengarahkan kembali ke beranda; sesi hanya dihapus melalui POST.
+    if request.method == "POST":
+        session.clear()
     return redirect(url_for("index"))
 
 
